@@ -1,0 +1,115 @@
+name: globalpay
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: globalpay-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-globalpay}
+      POSTGRES_USER: ${POSTGRES_USER:-globalpay}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-globalpay}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-globalpay} -d ${POSTGRES_DB:-globalpay}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks: [globalpay-net]
+
+  redis:
+    image: redis:7-alpine
+    container_name: globalpay-redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks: [globalpay-net]
+
+  backend:
+    build:
+      context: ./backend
+    container_name: globalpay-backend
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://globalpay:globalpay@postgres:5432/globalpay}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+    volumes:
+      - model_data:/app/model_data
+      - ./datasets:/app/datasets:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/live', timeout=2)"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    networks: [globalpay-net]
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-/api/v1}
+    container_name: globalpay-frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    networks: [globalpay-net]
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    container_name: globalpay-prometheus
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    networks: [globalpay-net]
+
+  grafana:
+    image: grafana/grafana:11.2.2
+    container_name: globalpay-grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+    ports:
+      - "${GRAFANA_PORT:-3001}:3000"
+    networks: [globalpay-net]
+
+networks:
+  globalpay-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  model_data:
+  prometheus_data:
+  grafana_data:
