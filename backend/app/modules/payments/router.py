@@ -9,7 +9,12 @@ from app.api.deps import get_current_user, require_roles
 from app.core.cache import cache_get_json, cache_set_json
 from app.core.database import get_db
 from app.models.entities import Customer, Merchant, Transaction, User, Wallet
-from app.modules.payments.schemas import MerchantPaymentRequest, PaymentDashboardOut, TransactionOut, TransferRequest
+from app.modules.payments.schemas import (
+    MerchantPaymentRequest,
+    PaymentDashboardOut,
+    TransactionOut,
+    TransferRequest,
+)
 from app.modules.payments.service import execute_transfer
 from app.modules.wallets.router import wallet_for_user
 

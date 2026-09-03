@@ -11,7 +11,6 @@ from app.core.database import get_db
 from app.core.security import decode_access_token
 from app.models.entities import User
 
-
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.api_v1_prefix}/auth/login")
 
 

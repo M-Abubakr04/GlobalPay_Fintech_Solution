@@ -17,7 +17,6 @@ from app.models.entities import (
     Wallet,
 )
 
-
 DEMO_USERS = [
     ("customer@globalpay.example.com", "Customer123!", "customer", "Ayesha Khan"),
     ("receiver@globalpay.example.com", "Receiver123!", "customer", "Bilal Ahmed"),
@@ -47,7 +46,7 @@ def seed():
     db = SessionLocal()
     try:
         created = {}
-        for email, password, role, full_name in DEMO_USERS:
+        for email, password, role, _full_name in DEMO_USERS:
             created[email] = create_user(db, email, password, role)
 
         customer_specs = [

@@ -1,7 +1,5 @@
 from decimal import Decimal
 
-from sqlalchemy import select
-
 from app.core.database import SessionLocal
 from app.core.security import hash_password
 from app.models.entities import User, Wallet
