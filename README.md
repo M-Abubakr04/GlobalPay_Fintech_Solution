@@ -140,7 +140,7 @@ Global_Pay_FinTech_Solutions/
 ├── database/                   PostgreSQL schema reference
 ├── monitoring/                 Prometheus and Grafana provisioning
 ├── postman/                    Postman collection and local environment
-├── docs/                       architecture, guides and evidence reports
+├── docs/                       architecture, guides, evidence and final presentation
 ├── k8s/                        optional K3s/Kind manifests
 ├── scripts/                    environment, scans, backup and smoke test
 ├── compose.yaml                complete local deployment
