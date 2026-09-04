@@ -29,6 +29,7 @@ type NavItem = {
 const nav: NavItem[] = [
   { label: "Overview", path: "/", icon: LayoutDashboard, roles: ["customer", "merchant", "analyst", "executive", "admin"], module: "Platform" },
   { label: "Customer & Wallet", path: "/wallet", icon: WalletCards, roles: ["customer", "admin"], module: "Module 1" },
+  { label: "Merchant Portal", path: "/merchant", icon: Building2, roles: ["merchant"], module: "Module 1" },
   { label: "Payments", path: "/payments", icon: CreditCard, roles: ["customer", "analyst", "executive", "admin"], module: "Module 2" },
   { label: "Fraud Operations", path: "/fraud", icon: BrainCircuit, roles: ["analyst", "executive", "admin"], module: "Module 3" },
   { label: "Open Banking / CBDC", path: "/open-banking", icon: Landmark, roles: ["customer", "analyst", "executive", "admin"], module: "Module 4" },

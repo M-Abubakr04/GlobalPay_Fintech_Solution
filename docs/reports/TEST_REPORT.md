@@ -7,7 +7,7 @@
 
 | Check | Command / scope | Result |
 |---|---|---|
-| Backend automated tests | Pytest in the built backend image | **5 passed**, 1 upstream deprecation warning |
+| Backend automated tests | Pytest in the built backend image | **6 passed**, including merchant settlement reporting |
 | Frontend production build | `npm run build` | **Passed**, 2,271 modules transformed |
 | Docker Compose configuration | `docker compose config --quiet` | **Passed** |
 | Full stack startup | PostgreSQL, Redis, FastAPI, React/Nginx, Prometheus, Grafana | **Started successfully** |
@@ -25,6 +25,7 @@
 - Lightweight fraud-model training with mandatory human review.
 - Executive dashboard aggregation and read-only flag.
 - Financial report response, currency, and populated breakdown.
+- Merchant-only settlement report, received-payment totals and transaction details.
 - Encryption round trip, password hashing, and role-based route denial.
 
 ## Notes

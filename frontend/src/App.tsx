@@ -6,6 +6,7 @@ import { useAuth } from "./context/AuthContext";
 import { ExecutivePage } from "./pages/ExecutivePage";
 import { FraudPage } from "./pages/FraudPage";
 import { LoginPage } from "./pages/LoginPage";
+import { MerchantPage } from "./pages/MerchantPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { OpenBankingPage } from "./pages/OpenBankingPage";
 import { OverviewPage } from "./pages/OverviewPage";
@@ -39,6 +40,7 @@ export default function App() {
       >
         <Route index element={<OverviewPage />} />
         <Route path="/wallet" element={<RoleRoute roles={["customer", "admin"]}><WalletPage /></RoleRoute>} />
+        <Route path="/merchant" element={<RoleRoute roles={["merchant"]}><MerchantPage /></RoleRoute>} />
         <Route path="/payments" element={<RoleRoute roles={["customer", "analyst", "executive", "admin"]}><PaymentsPage /></RoleRoute>} />
         <Route path="/fraud" element={<RoleRoute roles={["analyst", "executive", "admin"]}><FraudPage /></RoleRoute>} />
         <Route path="/open-banking" element={<RoleRoute roles={["customer", "analyst", "executive", "admin"]}><OpenBankingPage /></RoleRoute>} />

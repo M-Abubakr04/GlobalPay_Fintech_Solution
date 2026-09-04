@@ -14,6 +14,8 @@ from app.modules.customers.schemas import (
     CustomerReportOut,
     CustomerUpdate,
     MerchantApplication,
+    MerchantPaymentOut,
+    MerchantSettlementReportOut,
 )
 
 router = APIRouter(prefix="/customers", tags=["Module 1 - Customers"])
@@ -144,6 +146,50 @@ def customer_report(current_user: User = Depends(get_current_user), db: Session 
     )
 
 
+
+
+@router.get("/merchant/me/report", response_model=MerchantSettlementReportOut)
+def merchant_settlement_report(
+    current_user: User = Depends(require_roles("merchant")),
+    db: Session = Depends(get_db),
+):
+    merchant = db.scalar(select(Merchant).where(Merchant.user_id == current_user.id))
+    if not merchant:
+        raise HTTPException(status_code=404, detail="Merchant profile not found")
+    wallet = db.scalar(select(Wallet).where(Wallet.merchant_id == merchant.id))
+    if not wallet:
+        raise HTTPException(status_code=404, detail="Merchant settlement wallet not found")
+
+    completed_filter = (
+        Transaction.receiver_wallet_id == wallet.id,
+        Transaction.status == "COMPLETED",
+    )
+    payment_count = db.scalar(select(func.count(Transaction.id)).where(*completed_filter)) or 0
+    payment_volume = db.scalar(
+        select(func.coalesce(func.sum(Transaction.amount), 0)).where(*completed_filter)
+    ) or Decimal(0)
+    payments = list(
+        db.scalars(
+            select(Transaction)
+            .where(Transaction.receiver_wallet_id == wallet.id)
+            .order_by(Transaction.created_at.desc())
+            .limit(100)
+        )
+    )
+
+    return MerchantSettlementReportOut(
+        merchant_id=merchant.id,
+        business_name=merchant.business_name,
+        status=merchant.status,
+        settlement_cycle=merchant.settlement_config.get("cycle", "T+1"),
+        wallet_id=wallet.id,
+        wallet_status=wallet.status,
+        balance=wallet.balance,
+        currency=wallet.currency,
+        completed_payment_count=payment_count,
+        completed_payment_volume=payment_volume,
+        payments=[MerchantPaymentOut.model_validate(payment, from_attributes=True) for payment in payments],
+    )
 
 
 @router.get("/merchants/active")

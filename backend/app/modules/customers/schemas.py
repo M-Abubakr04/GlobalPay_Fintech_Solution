@@ -34,3 +34,28 @@ class CustomerReportOut(BaseModel):
     total_sent: Decimal
     total_received: Decimal
     merchant_status: str | None
+
+
+class MerchantPaymentOut(BaseModel):
+    id: str
+    reference: str
+    amount: Decimal
+    currency: str
+    status: str
+    channel: str
+    description: str | None
+    created_at: datetime
+
+
+class MerchantSettlementReportOut(BaseModel):
+    merchant_id: str
+    business_name: str
+    status: str
+    settlement_cycle: str
+    wallet_id: str
+    wallet_status: str
+    balance: Decimal
+    currency: str
+    completed_payment_count: int
+    completed_payment_volume: Decimal
+    payments: list[MerchantPaymentOut]

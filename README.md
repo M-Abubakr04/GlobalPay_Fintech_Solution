@@ -83,14 +83,15 @@ These credentials are strictly for a local demonstration.
 1. Start the platform with Docker Compose.
 2. Open the React frontend and log in as the customer.
 3. View wallet balance and wallet activity.
-4. Transfer funds to `receiver@globalpay.example.com`.
-5. Open transaction history and verify the status/reference.
-6. Log in as the analyst and review fraud alerts/investigations.
-7. Open the Open Banking/CBDC page and demonstrate consent/API/CBDC activity.
-8. Log in as the executive and view cross-module KPIs.
-9. Open Reports and export the financial CSV and executive JSON evidence.
-10. Open Swagger/ReDoc for API documentation.
-11. Open Prometheus/Grafana to show API metrics and health.
+4. Transfer funds to `receiver@globalpay.example.com` and verify the transaction reference.
+5. Make a simulated merchant payment to GlobalMart.
+6. Log in as the merchant and show the updated settlement balance, received payment and CSV export.
+7. Log in as the analyst and review fraud alerts/investigations.
+8. Open the Open Banking/CBDC page and demonstrate consent/API/CBDC activity.
+9. Log in as the executive and view cross-module KPIs.
+10. Open Reports and export the financial CSV and executive JSON evidence.
+11. Open Swagger/ReDoc for API documentation.
+12. Open Prometheus/Grafana to show API metrics and health.
 
 ## Testing methodology
 
